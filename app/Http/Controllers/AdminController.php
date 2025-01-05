@@ -9,6 +9,10 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Transaction;
 use Intervention\Image\Laravel\Facades\Image;
 
 
@@ -396,5 +400,107 @@ class AdminController extends Controller
         }
         $product->delete();
         return redirect()->route('admin.products')->with('status','Record has been deleted successfully !');
+    }
+
+    // Coupons
+    public function coupons()
+    {
+        $coupons = Coupon::orderBy("expiry_date","DESC")->paginate(12);
+        return view("admin.coupons",compact("coupons"));
+    }
+
+    public function add_coupon()
+    {
+        return view("admin.coupon-add");
+    }
+
+    public function add_coupon_store(Request $request)
+    {
+        $request->validate([
+            'code' => 'required',
+            'type' => 'required',
+            'value' => 'required|numeric',
+            'cart_value' => 'required|numeric',
+            'expiry_date' => 'required|date'
+        ]);
+
+        $coupon = new Coupon();
+        $coupon->code = $request->code;
+        $coupon->type = $request->type;
+        $coupon->value = $request->value;
+        $coupon->cart_value = $request->cart_value;
+        $coupon->expiry_date = $request->expiry_date;
+        $coupon->save();
+        return redirect()->route("admin.coupons")->with('status','Record has been added successfully !');
+    }
+
+
+    public function coupon_edit($id)
+    {
+        $coupon = Coupon::find($id);
+        return view('admin.coupon-edit',compact('coupon'));
+    }
+
+    public function update_coupon(Request $request)
+    {
+       $request->validate([
+       'code' => 'required',
+       'type' => 'required',
+       'value' => 'required|numeric',
+       'cart_value' => 'required|numeric',
+       'expiry_date' => 'required|date'
+       ]);
+
+       $coupon = Coupon::find($request->id);
+       $coupon->code = $request->code;
+       $coupon->type = $request->type;
+       $coupon->value = $request->value;
+       $coupon->cart_value = $request->cart_value;
+       $coupon->expiry_date = $request->expiry_date;
+       $coupon->save();
+       return redirect()->route('admin.coupons')->with('status','Record has been updated successfully !');
+    }
+
+    public function coupon_delete($id)
+    {
+        $coupon = Coupon::find($id);
+        $coupon->delete();
+        return redirect()->route('admin.coupons')->with('status','Record has been deleted successfully !');
+    }
+
+    // Orders
+    public function orders()
+    {
+        $orders = Order::orderBy('created_at','DESC')->paginate(12);
+        return view("admin.orders",compact('orders'));
+    }
+
+    public function order_details($order_id)
+    {
+        $order = Order::find($order_id);
+        $orderItems = OrderItem::where('order_id',$order_id)->orderBy('id')->paginate(12);
+        $transaction = Transaction::where('order_id',$order_id)->first();
+        return view("admin.order-details",compact('order','orderItems','transaction'));
+    }
+
+    public function update_order_status(Request $request){
+        $order = Order::find($request->order_id);
+        $order->status = $request->order_status;
+        if($request->order_status=='delivered')
+        {
+            $order->delivered_date = Carbon::now();
+        }
+        else if($request->order_status=='canceled')
+        {
+            $order->canceled_date = Carbon::now();
+        }
+        $order->save();
+        if($request->order_status=='delivered')
+        {
+            $transaction = Transaction::where('order_id',$request->order_id)->first();
+            $transaction->status = "approved";
+            $transaction->save();
+        }
+        return back()->with("status", "Status changed successfully!");
     }
 }
