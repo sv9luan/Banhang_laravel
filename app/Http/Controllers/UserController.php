@@ -25,7 +25,7 @@ class UserController extends Controller
 
     public function order_details($order_id)
     {
-        $order = Order::where('user_id',Auth::user()->id)->find($order_id)->first();
+        $order = Order::where('user_id',Auth::user()->id)->where('id',$order_id)->first();
         if($order)
         {
             $orderItems = OrderItem::where('order_id',$order_id)->orderBy('id')->paginate(12);

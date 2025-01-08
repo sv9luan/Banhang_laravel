@@ -39,11 +39,18 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('cart.checkout'
 Route::post('/place-an-order',[CartController::class,'place_an_order'])->name('cart.place.an.order');
 Route::get('/order-confirmation',[CartController::class,'order-confirmation'])->name('cart.order.confirmation');
 
+//Contact
+Route::get('/contact-us',[HomeController::class,'contact'])->name('home.contact');
+Route::post('/contact/store', [HomeController::class, 'contact_store'])->name('home.contact.store');
+
+//Search
+Route::get('/search',[HomeController::class,'search'])->name('home.search');
+
 
 Route::middleware(['auth'])->group(function(){
     Route::get('/account_dashboard',[UserController::class,'index'])->name('user.index');
     Route::get('/account-orders',[UserController::class,'orders'])->name('user.orders');
-    Route::get('/account-orders/{order_id}/details',[UserController::class,'order_details'])->name('user.order.details');
+    Route::get('/account-order/{order_id}/details',[UserController::class,'order_details'])->name('user.order.details');
     Route::put('/account-order/cancel_order',[UserController::class,'order_cancel'])->name('user.order.cancel');
 });
 
@@ -88,4 +95,17 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     Route::get('/admin/order/{order_id}/details',[AdminController::class,'order_details'])->name('admin.order.details');
     Route::put('/admin/order/update-status',[AdminController::class,'update_order_status'])->name('admin.order.status.update');
 
+    //Slider
+    Route::get('/admin/slides',[AdminController::class,'slides'])->name('admin.slides');
+    Route::get('/admin/slide/add',[AdminController::class,'slide_add'])->name('admin.slide.add');
+    Route::post('/admin/slide/store',[AdminController::class,'slide_store'])->name('admin.slide.store');
+    Route::get('/admin/slide/{id}/edit',[AdminController::class,'slide_edit'])->name('admin.slide.edit');
+    Route::put('/admin/slide/update',[AdminController::class,'slide_update'])->name('admin.slide.update');
+    Route::delete('/admin/slide/{id}/delete',[AdminController::class,'slide_delete'])->name('admin.slide.delete');
+
+    Route::get('/admin/contact', [AdminController::class, 'contacts'])->name('admin.contacts');
+    Route::delete('/admin/contact/{id}/delete',[AdminController::class,'contact_delete'])->name('admin.contact.delete');
+
+    //Search
+    Route::get('/search',[AdminController::class,'search'])->name('admin.search');
 });
