@@ -13,7 +13,7 @@ use App\Http\Middleware\AuthAdmin;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/shop',[ShopController::class,'index'])->name('shop.index');
 Route::get('/shop/{product_slug}',[ShopController::class,'product_details'])->name('shop.product.details');
 
@@ -46,12 +46,25 @@ Route::post('/contact/store', [HomeController::class, 'contact_store'])->name('h
 //Search
 Route::get('/search',[HomeController::class,'search'])->name('home.search');
 
+//About
+Route::get('/about',[HomeController::class,'about'])->name('home.about');
+
+
 
 Route::middleware(['auth'])->group(function(){
     Route::get('/account_dashboard',[UserController::class,'index'])->name('user.index');
     Route::get('/account-orders',[UserController::class,'orders'])->name('user.orders');
     Route::get('/account-order/{order_id}/details',[UserController::class,'order_details'])->name('user.order.details');
     Route::put('/account-order/cancel_order',[UserController::class,'order_cancel'])->name('user.order.cancel');
+    Route::get('/account-address',[UserController::class,'account_address'])->name('user.acc_add');
+    Route::get('/account-address-add',[UserController::class,'account_address_add'])->name('user.acc_add_add');
+    Route::post('/account/address/add', [UserController::class, 'account_address_add_store'])->name('user.account.address.add.store');
+    Route::get('account/address/edit/{id}', [UserController::class, 'editAddress'])->name('user.account.address.edit');
+    Route::put('account/address/update/{id}', [UserController::class, 'updateAddress'])->name('user.account.address.update');
+    Route::get('/account-details',[UserController::class,'acc_details'])->name('user.account-details');
+
+
+
 });
 
 Route::middleware(['auth', AuthAdmin::class])->group(function(){
@@ -108,4 +121,13 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
 
     //Search
     Route::get('/search',[AdminController::class,'search'])->name('admin.search');
+
+    //Users
+    Route::get('/admin/users',[AdminController::class,'users'])->name('admin.users');
+    Route::get('/admin/user/{id}/edit',[AdminController::class,'user_edit'])->name('admin.user.edit');
+    Route::put('/admin/user/update',[AdminController::class,'user_update'])->name('admin.user.update');
+
+    //Setting
+    Route::get('/admin/setting',[AdminController::class,'setting'])->name('admin.setting');
+    Route::put('/setting/update', [AdminController::class, 'updateSetting'])->name('admin.setting.update');
 });

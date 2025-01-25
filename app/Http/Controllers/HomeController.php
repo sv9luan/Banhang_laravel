@@ -47,8 +47,25 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $results = Product::where('name', 'LIKE', "%{$query}%")->get()->take(8);
+
+        // Trả về rỗng nếu không có giá trị tìm kiếm
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        // Truy vấn với giới hạn 8 kết quả
+        $results = Product::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%") // Nếu muốn tìm theo mô tả
+            ->limit(8) // Giới hạn kết quả trả về
+            ->get();
+
+        // Trả kết quả dưới dạng JSON
         return response()->json($results);
+    }
+
+    public function about()
+    {
+        return view('about');
     }
 
 

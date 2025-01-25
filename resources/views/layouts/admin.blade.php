@@ -121,35 +121,34 @@
                                         </li>
                                     </ul>
                                 </li>
-
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
-                                        <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Order</div>
+                                        <div class="icon"><i class="icon-grid"></i></div>
+                                        <div class="text">Coupns</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Orders</div>
+                                            <a href="{{ route('admin.coupon.add') }}" class="">
+                                                <div class="text">New Coupns</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
-                                            <a href="order-tracking.html" class="">
-                                                <div class="text">Order tracking</div>
+                                            <a href="{{ route('admin.coupons') }}" class="">
+                                                <div class="text">Coupns</div>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="{{ route('admin.slides') }}" class="">
-                                        <div class="icon"><i class="icon-image"></i></div>
-                                        <div class="text">Slider</div>
+                                    <a href="{{ route('admin.orders') }}" class="">
+                                        <div class="icon"><i class="icon-file-plus"></i></div>
+                                        <div class="text">Order</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="{{ route('admin.coupons') }}" class="">
-                                        <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Coupns</div>
+                                    <a href="{{ route('admin.slides') }}" class="">
+                                        <div class="icon"><i class="icon-image"></i></div>
+                                        <div class="text">Slider</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -160,14 +159,14 @@
                                 </li>
 
                                 <li class="menu-item">
-                                    <a href="users.html" class="">
+                                    <a href="{{ route('admin.users') }}" class="">
                                         <div class="icon"><i class="icon-user"></i></div>
                                         <div class="text">User</div>
                                     </a>
                                 </li>
 
                                 <li class="menu-item">
-                                    <a href="settings.html" class="">
+                                    <a href="{{ route('admin.setting') }}" class="">
                                         <div class="icon"><i class="icon-settings"></i></div>
                                         <div class="text">Settings</div>
                                     </a>

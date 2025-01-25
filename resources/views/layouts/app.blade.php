@@ -358,7 +358,7 @@
                             <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="about.html" class="navigation__link">About</a>
+                            <a href="{{ route('home.about') }}" class="navigation__link">About</a>
                         </li>
                         <li class="navigation__item">
                             <a href="{{ route('home.contact') }}" class="navigation__link">Contact</a>
@@ -448,7 +448,7 @@
                             <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
                         </li>
                         <li class="navigation__item">
-                            <a href="about.html" class="navigation__link">About</a>
+                            <a href="{{ route('home.about') }}" class="navigation__link">About</a>
                         </li>
                         <li class="navigation__item">
                             <a href="{{ route('home.contact') }}" class="navigation__link">Contact</a>
@@ -730,7 +730,7 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
-    <script>
+    {{-- <script>
         $(function() {
             $("#search-input").on("keyup", function() {
                 var searchQuery = $(this).val();
@@ -774,7 +774,7 @@
                 }
             })
         })
-    </script>
+    </script> --}}
     <script src="{{ asset('assets/js/theme.js') }}"></script>
     @stack('scripts')
 

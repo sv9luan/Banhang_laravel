@@ -15,6 +15,8 @@ use App\Models\OrderItem;
 use App\Models\Transaction;
 use App\Models\Slide;
 use App\Models\Contact;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Laravel\Facades\Image;
 
@@ -661,6 +663,93 @@ class AdminController extends Controller
         $query = $request->input('query');
         $results = Product::where('name', 'LIKE', "%{$query}%")->get()->take(8);
         return response()->json($results);
+    }
+
+    public function users()
+    {
+        $users = User::where('utype', '!=', 'ADM') // Loại trừ utype là ADM
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10);
+
+        return view('admin.users', compact('users'));
+    }
+
+    public function user_edit()
+    {
+        $user = User::find(request()->id);
+        return view('admin.users-edit', compact('user'));
+    }
+
+    public function user_update(Request $request)
+    {
+        $user = User::find($request->id);
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+
+        // Xác thực dữ liệu
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'mobile' => 'required|digits:10',
+            'password' => 'nullable|min:6|confirmed', // Kiểm tra mật khẩu và xác nhận
+        ]);
+
+        // Cập nhật dữ liệu người dùng
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+
+        // Kiểm tra nếu cả password và password_confirmation được nhập
+        if ($request->filled('password') && $request->filled('password_confirmation')) {
+            if ($request->password === $request->password_confirmation) {
+                $user->password = bcrypt($request->password);
+            } else {
+                return redirect()->back()->with('error', 'Password confirmation does not match.');
+            }
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users')->with('success', 'User information updated successfully.');
+    }
+
+    public function setting()
+    {
+        return view('admin.setting');
+    }
+
+    public function updateSetting(Request $request)
+    {
+        // Xác thực các trường
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'mobile' => 'required|digits:10|unique:users,mobile,' . Auth::id(), // Kiểm tra trùng số điện thoại
+            'old_password' => 'nullable|required_with:new_password|min:6',
+            'new_password' => 'nullable|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Kiểm tra và cập nhật thông tin
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile = $request->mobile;
+
+        // Kiểm tra và cập nhật mật khẩu nếu có thay đổi
+        if ($request->filled('old_password') && $request->filled('new_password')) {
+            if (Hash::check($request->old_password, $user->password)) {
+                $user->password = bcrypt($request->new_password);
+            } else {
+                return back()->withErrors(['old_password' => 'The old password is incorrect.']);
+            }
+        }
+
+        // Lưu thay đổi
+        $user->save();
+
+        return redirect()->route('admin.setting')->with('success', 'Settings updated successfully.');
     }
 
 }
